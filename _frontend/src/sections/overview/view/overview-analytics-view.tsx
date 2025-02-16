@@ -23,7 +23,9 @@ export function OverviewAnalyticsView() {
       <Typography variant="h4" sx={{ mb: { xs: 3, md: 5 } }}>
         Hi, Welcome back 👋
       </Typography>
+
       <ElectricityFlowDiagram />
+
       <Grid container spacing={3}>
         <Grid xs={12} sm={6} md={3}>
           <AnalyticsWidgetSummary
@@ -82,47 +84,47 @@ export function OverviewAnalyticsView() {
 
         <Grid xs={12} md={6} lg={4}>
           <AnalyticsCurrentVisits
-            title="Current visits"
+            title="Consumption"
             chart={{
               series: [
-                { label: 'America', value: 3500 },
-                { label: 'Asia', value: 2500 },
-                { label: 'Europe', value: 1500 },
-                { label: 'Africa', value: 500 },
+                { label: 'Tenants', value: 3500 },
+                { label: 'Common Area', value: 2500 },
+
               ],
             }}
           />
         </Grid>
 
-        <Grid xs={12} md={6} lg={8}>
+        <Grid xs={12} md={8} lg={8}>
           <AnalyticsWebsiteVisits
-            title="Website visits"
+            title="Delta Analytics"
             subheader="(+43%) than last year"
             chart={{
-              categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep'],
+              categories: ['D1', 'D2', 'D3', 'D4', 'D5', 'D6', 'D7', 'D8', 'D9', 'D10'],
               series: [
-                { name: 'Team A', data: [43, 33, 22, 37, 67, 68, 37, 24, 55] },
-                { name: 'Team B', data: [51, 70, 47, 67, 40, 37, 24, 70, 24] },
+                { name: 'Building', data: [43, 33, 22, 37, 67, 68, 37, 24, 55] },
+                { name: 'HVAC', data: [51, 70, 47, 67, 40, 37, 24, 70, 24] },
+                { name: 'Combined', data: [] },
               ],
             }}
           />
         </Grid>
 
-        <Grid xs={12} md={6} lg={8}>
+        <Grid xs={12} md={6} lg={12}>
           <AnalyticsConversionRates
-            title="Conversion rates"
+            title="Top Five Companies (Current Month)"
             subheader="(+43%) than last year"
             chart={{
-              categories: ['Italy', 'Japan', 'China', 'Canada', 'France'],
+              categories: ['Company 1', 'Company 2', 'Company 3', 'Company 4', 'Company 5'],
               series: [
-                { name: '2022', data: [44, 55, 41, 64, 22] },
-                { name: '2023', data: [53, 32, 33, 52, 13] },
+                { name: 'Building', data: [44, 55, 41, 64, 22] },
+                { name: 'HVAC', data: [53, 32, 33, 52, 13] },
               ],
             }}
           />
         </Grid>
 
-        <Grid xs={12} md={6} lg={4}>
+        {/* <Grid xs={12} md={6} lg={4}>
           <AnalyticsCurrentSubject
             title="Current subject"
             chart={{
@@ -134,7 +136,7 @@ export function OverviewAnalyticsView() {
               ],
             }}
           />
-        </Grid>
+        </Grid> */}
 
         <Grid xs={12} md={6} lg={8}>
           <AnalyticsNews title="News" list={_posts.slice(0, 5)} />
