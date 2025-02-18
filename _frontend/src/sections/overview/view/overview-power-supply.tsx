@@ -9,6 +9,7 @@ import ReactFlow, {
 import Grid from '@mui/material/Unstable_Grid2'; // MUI v6 Grid
 import Typography from '@mui/material/Typography'; // MUI v6 Typography
 import Button from '@mui/material/Button'; // MUI v6 Button
+import Image from '@emotion/react'
 import SolarPowerIcon from '@mui/icons-material/SolarPower'; // MUI v6 Icon
 import ElectricBoltIcon from '@mui/icons-material/ElectricBolt'; // MUI v6 Icon
 import GridViewIcon from '@mui/icons-material/GridView'; // MUI v6 Icon
@@ -31,7 +32,7 @@ const initialNodes: CustomNode[] = [
             label: (
                 <Box sx={{ textAlign: 'center' }}>
                     <Typography variant="h6" sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        NASTP
+                       <img  src="./delta-logo.gif" alt='NASTP DELTA' />
                     </Typography>
                 </Box>
             ),
