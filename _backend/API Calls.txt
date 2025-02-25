@@ -1,0 +1,70 @@
+# API Documentation
+
+## 1. Meters API (/api/meters)
+
+| Method | Endpoint          | Description              |
+|--------|-------------------|--------------------------|
+| GET    | /api/meters       | Get all meters           |
+| GET    | /api/meters/:id   | Get a meter by ID        |
+| POST   | /api/meters       | Create a new meter       |
+| PUT    | /api/meters/:id   | Update an existing meter |
+| DELETE | /api/meters/:id   | Delete a meter           |
+
+```bash
+curl -X GET http://localhost:5000/api/meters
+
+### Example API Call (GET All Meters)
+## 2. Blocks API (/api/blocks)
+
+### Endpoints
+| Method | Endpoint | Description |
+|--------|---------|-------------|
+| GET    | `/api/blocks` | Get all blocks |
+| GET    | `/api/blocks/:id` | Get a block by ID |
+| POST   | `/api/blocks` | Create a new block |
+| PUT    | `/api/blocks/:id` | Update an existing block |
+| DELETE | `/api/blocks/:id` | Delete a block |
+
+### Example API Call (POST New Block):
+```bash
+curl -X POST http://localhost:5000/api/blocks \  
+     -H "Content-Type: application/json" \  
+     -d '{"block_name": "Main Block"}'
+```
+
+---
+
+## 3. Companies API (/api/companies)
+
+### Endpoints
+| Method | Endpoint | Description |
+|--------|---------|-------------|
+| GET    | `/api/companies` | Get all companies |
+| GET    | `/api/companies/:id` | Get a company by ID |
+| POST   | `/api/companies` | Create a new company |
+| PUT    | `/api/companies/:id` | Update an existing company |
+| DELETE | `/api/companies/:id` | Delete a company |
+
+### Example API Call (PUT Update Company):
+```bash
+curl -X PUT http://localhost:5000/api/companies/1 \  
+     -H "Content-Type: application/json" \  
+     -d '{"company_name": "New Company", "company_address": "123 Street", "company_type": "Electric", "block_id": 2}'
+```
+
+---
+
+## 4. Energy Sources API (/api/energy_sources)
+
+### Endpoints
+| Method | Endpoint | Description |
+|--------|---------|-------------|
+| GET    | `/api/energy_sources` | Get all energy sources |
+| GET    | `/api/energy_sources/:id` | Get an energy source by ID |
+| POST   | `/api/energy_sources` | Create a new energy source |
+| PUT    | `/api/energy_sources/:id` | Update an existing energy source |
+| DELETE | `/api/energy_sources/:id` | Delete an energy source |
+
+### Example API Call (DELETE Energy Source):
+```bash
+curl -X DELETE http://localhost:5000/api/energy_sources/3
