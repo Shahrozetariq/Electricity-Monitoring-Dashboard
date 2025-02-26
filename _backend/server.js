@@ -14,6 +14,7 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
+
 app.use('/api/meters', meterRoutes);
 app.use('/api/blocks', blockRoutes);
 app.use('/api/companies', companyRoutes);

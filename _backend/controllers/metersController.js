@@ -1,6 +1,7 @@
 const Meter = require('../models/meterModel');
 
 exports.getAllMeters = async (req, res) => {
+  console.log('meters controller');
   try {
     const meters = await Meter.getAll();
     res.json(meters);
@@ -45,3 +46,14 @@ exports.deleteMeter = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+
+exports.updateFromReadings = async (req, res) => {
+  try {
+    await Meter.updateFromReadings();
+    res.status(200).json({ message: "Update Successful" });
+  } catch (error) {
+    res.status(500).json({ message: "Failed to update meters", error: error.message });
+  }
+};
+

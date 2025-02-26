@@ -2,7 +2,9 @@ const db = require('../config/db');
 
 class Meter {
     static async getAll() {
+        // console.log(rows);
         const [rows] = await db.query('SELECT * FROM meters');
+
         return rows;
     }
 
@@ -25,6 +27,11 @@ class Meter {
 
     static async delete(meter_id) {
         await db.query('DELETE FROM meters WHERE meter_id = ?', [meter_id]);
+        return true;
+    }
+
+    static async updateFromReadings() {
+        await db.query("CALL AddMetersFromReadings()");
         return true;
     }
 }

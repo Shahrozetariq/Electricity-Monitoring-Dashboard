@@ -7,12 +7,16 @@ import LinearProgress, { linearProgressClasses } from '@mui/material/LinearProgr
 import { varAlpha } from 'src/theme/styles';
 import { AuthLayout } from 'src/layouts/auth';
 import { DashboardLayout } from 'src/layouts/dashboard';
+// import { Block } from '@mui/icons-material';
 
 // ----------------------------------------------------------------------
 
 export const HomePage = lazy(() => import('src/pages/home'));
 export const BlogPage = lazy(() => import('src/pages/blog'));
 export const UserPage = lazy(() => import('src/pages/user'));
+export const MetersPage = lazy(() => import('src/pages/MeterPage'));
+export const CompanyPage = lazy(() => import('src/pages/CompaniesPage'));
+export const BlocksPage = lazy(() => import('src/pages/BlocksPage'));
 export const SignInPage = lazy(() => import('src/pages/sign-in'));
 export const ProductsPage = lazy(() => import('src/pages/products'));
 export const Page404 = lazy(() => import('src/pages/page-not-found'));
@@ -45,6 +49,9 @@ export function Router() {
       children: [
         { element: <HomePage />, index: true },
         { path: 'user', element: <UserPage /> },
+        { path: 'meters', element: <MetersPage /> },
+        { path: 'companies', element: <CompanyPage /> },
+        { path: 'block', element: <BlocksPage /> },
         { path: 'products', element: <ProductsPage /> },
         { path: 'blog', element: <BlogPage /> },
       ],
