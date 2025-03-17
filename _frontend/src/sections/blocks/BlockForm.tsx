@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Block } from "./block";
+
 import {
     TextField,
     Button,
@@ -8,6 +8,7 @@ import {
     DialogContent,
     DialogTitle
 } from "@mui/material";
+import { Block } from "./block";
 
 interface Props {
     open: boolean;

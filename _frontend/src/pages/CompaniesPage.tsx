@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
+import { Button, Container, Typography } from "@mui/material";
+
 import { getCompanies, createCompany, updateCompany, deleteCompany, getBlocks } from "../sections/company/companiesApi";
 import CompanyTable from "../sections/company/Companytable";
 import CompanyForm from "../sections/company/CompanyForm";
 import { Company } from "../sections/company/company";
-import { Button, Container, Typography } from "@mui/material";
 
 const CompaniesPage: React.FC = () => {
     const [companies, setCompanies] = useState<Company[]>([]);

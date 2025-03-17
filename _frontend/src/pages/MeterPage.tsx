@@ -1,10 +1,12 @@
 // Date: 26/02/2025
 import React, { useState, useEffect } from "react";
-import { getMeters, createMeter, updateMeter, deleteMeter, getEnergySources, getCompanies, getBlocks } from "../sections/user/view/meters/MetersApi";
 import { Button, Container, Typography } from "@mui/material";
+import { Meter } from "src/sections/user/view/meters/meter";
 import MeterTable from '../sections/user/view/meters/MeterTable';
 import MeterForm from '../sections/user/view/meters/MeterForm';
-import { updateMetersFromReadings } from "../sections/user/view/meters/MetersApi";
+
+import { getMeters, createMeter, updateMeter, deleteMeter, getEnergySources, getCompanies, getBlocks, updateMetersFromReadings } from "../sections/user/view/meters/MetersApi";
+
 
 const MetersPage: React.FC = () => {
     const [meters, setMeters] = useState<Meter[]>([]);

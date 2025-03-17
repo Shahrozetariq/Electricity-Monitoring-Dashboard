@@ -1,5 +1,4 @@
 import React from "react";
-import { Company } from "../types/company";
 import {
     Table,
     TableBody,
@@ -12,6 +11,9 @@ import {
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { Company } from "./company";
+
+
 
 interface BlockLookup {
     block_id: number;

@@ -1,5 +1,4 @@
 import React from "react";
-import { Meter } from "../types/meter";
 import {
     Table,
     TableBody,
@@ -10,8 +9,10 @@ import {
     Paper,
     IconButton,
 } from "@mui/material";
+
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { Meter } from "./meter";
 
 interface Lookup {
     energy_source_id: number;

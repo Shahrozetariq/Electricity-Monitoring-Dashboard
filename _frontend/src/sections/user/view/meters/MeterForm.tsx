@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { Meter } from "./meter";
 import {
     TextField,
     Button,
@@ -10,8 +9,11 @@ import {
     Select,
     MenuItem,
     InputLabel,
-    FormControl
+    FormControl,
+    SelectChangeEvent
 } from "@mui/material";
+
+import { Meter } from "./meter";
 import { getEnergySources, getCompanies, getBlocks } from "./MetersApi";
 
 interface Props {
@@ -57,7 +59,9 @@ const MeterForm: React.FC<Props> = ({ open, onClose, onSubmit, meter }) => {
         fetchLookups();
     }, []);
 
-    const handleChange = (e: React.ChangeEvent<{ name?: string; value: unknown }>) => {
+    const handleChange = (
+        e: React.ChangeEvent<{ name?: string; value: unknown }> | SelectChangeEvent<number>
+    ) => {
         const { name, value } = e.target;
         if (name) {
             setFormData({ ...formData, [name]: value as string | number });

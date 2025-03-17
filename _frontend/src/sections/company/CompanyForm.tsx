@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { Company } from "../types/company";
 import {
     TextField,
     Button,
@@ -10,8 +9,11 @@ import {
     Select,
     MenuItem,
     InputLabel,
-    FormControl
+    FormControl,
+    SelectChangeEvent, // Import SelectChangeEvent
 } from "@mui/material";
+import { Company } from "./company";
+
 import { getBlocks } from "./companiesApi";
 
 interface Props {
@@ -51,8 +53,11 @@ const CompanyForm: React.FC<Props> = ({ open, onClose, onSubmit, company }) => {
         fetchBlocks();
     }, []);
 
-    const handleChange = (e: React.ChangeEvent<{ name?: string; value: unknown }>) => {
-        const { name, value } = e.target;
+    // Handle changes for TextField and Select
+    const handleChange = (
+        e: React.ChangeEvent<{ name?: string; value: unknown }> | SelectChangeEvent<number>
+    ) => {
+        const { name, value } = e.target as { name?: string; value: unknown };
         if (name) {
             setFormData({ ...formData, [name]: value as string | number });
         }
@@ -67,22 +72,51 @@ const CompanyForm: React.FC<Props> = ({ open, onClose, onSubmit, company }) => {
         <Dialog open={open} onClose={onClose}>
             <DialogTitle>{company ? "Edit Company" : "Add Company"}</DialogTitle>
             <DialogContent>
-                <TextField label="Company Name" name="company_name" fullWidth margin="normal" value={formData.company_name} onChange={handleChange} />
-                <TextField label="Address" name="company_address" fullWidth margin="normal" value={formData.company_address} onChange={handleChange} />
-                <TextField label="Type" name="company_type" fullWidth margin="normal" value={formData.company_type} onChange={handleChange} />
+                <TextField
+                    label="Company Name"
+                    name="company_name"
+                    fullWidth
+                    margin="normal"
+                    value={formData.company_name}
+                    onChange={handleChange}
+                />
+                <TextField
+                    label="Address"
+                    name="company_address"
+                    fullWidth
+                    margin="normal"
+                    value={formData.company_address}
+                    onChange={handleChange}
+                />
+                <TextField
+                    label="Type"
+                    name="company_type"
+                    fullWidth
+                    margin="normal"
+                    value={formData.company_type}
+                    onChange={handleChange}
+                />
 
                 <FormControl fullWidth margin="normal">
                     <InputLabel>Block</InputLabel>
-                    <Select name="block_id" value={formData.block_id} onChange={handleChange}>
+                    <Select
+                        name="block_id"
+                        value={formData.block_id}
+                        onChange={handleChange} // Use the updated handleChange
+                    >
                         {blocks.map((block) => (
-                            <MenuItem key={block.block_id} value={block.block_id}>{block.block_name}</MenuItem>
+                            <MenuItem key={block.block_id} value={block.block_id}>
+                                {block.block_name}
+                            </MenuItem>
                         ))}
                     </Select>
                 </FormControl>
             </DialogContent>
             <DialogActions>
                 <Button onClick={onClose}>Cancel</Button>
-                <Button onClick={handleSubmit} color="primary">Save</Button>
+                <Button onClick={handleSubmit} color="primary">
+                    Save
+                </Button>
             </DialogActions>
         </Dialog>
     );
