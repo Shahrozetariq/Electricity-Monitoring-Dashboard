@@ -1,27 +1,28 @@
-const express = require("express");
-const http = require("http");
-const { Server } = require("socket.io");
-const routes = require("./routes");
-const { handleWebSocket } = require("./controllers/websocketController");
+const express = require('express');
+const cors = require('cors');
+const bodyParser = require('body-parser');
+require('dotenv').config();
+
+const meterRoutes = require('./routes/meters');
+const blockRoutes = require('./routes/blocks');
+const companyRoutes = require('./routes/companies');
+const energySourceRoutes = require('./routes/energy_sources');
+
+
 
 const app = express();
-const server = http.createServer(app);
-const io = new Server(server, {
-  cors: {
-    origin: "*", // Adjust this for security in production
-  },
-});
+app.use(cors());
+app.use(bodyParser.json());
 
-console.log("Test 1122")
-app.use(express.json());
-app.use("/api", routes);
 
-io.on("connection", (socket) => {
-  console.log("New WebSocket connection");
-  handleWebSocket(socket);
-});
+app.use('/api/meters', meterRoutes);
+app.use('/api/blocks', blockRoutes);
+app.use('/api/companies', companyRoutes);
+app.use('/api/energy_sources', energySourceRoutes);
+
 
 const PORT = process.env.PORT || 5000;
-server.listen(PORT, () => {
+app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+
