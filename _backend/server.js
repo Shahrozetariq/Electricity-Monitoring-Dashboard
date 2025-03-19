@@ -12,6 +12,7 @@ const io = new Server(server, {
   },
 });
 
+console.log("Test 1122")
 app.use(express.json());
 app.use("/api", routes);
 
