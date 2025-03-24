@@ -3,8 +3,14 @@ import { Meter } from "./meter";
 
 
 
-const API_URL = "http://103.164.9.126/api";
+const API_URL = "http://localhost:5000/api";
 
+
+
+export const getMeterTypes = async () => {
+    const response = await axios.get(`${API_URL}/metertype`);
+    return response.data; // Returns the meter types from the backend
+};
 
 export const getEnergySources = async () => {
     const response = await axios.get(`${API_URL}/energy_sources`);

@@ -1,78 +1,151 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Doughnut } from 'react-chartjs-2';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
-import { Card, CardHeader } from '@mui/material';
+import axios from 'axios';
+import { Card, CardHeader, MenuItem, Select, SelectChangeEvent, FormControl } from '@mui/material';
 
 // Register Chart.js components
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 const GenerationMixChart: React.FC = () => {
-    // Dummy data
-    const data = {
-        labels: ['Solar', 'Gen Sets', 'Power Grid'],
-        datasets: [
-            {
-                label: 'Generation Mix (MW)',
-                data: [30, 20, 50], // Example data in MW
-                backgroundColor: [
-                    'rgba(255, 206, 86, 0.8)', // Solar (Yellow)
-                    'rgba(75, 192, 192, 0.8)', // Gen Sets (Teal)
-                    'rgba(153, 102, 255, 0.8)', // Power Grid (Purple)
-                ],
-                borderColor: [
-                    'rgb(158, 128, 53)',
-                    'rgb(42, 104, 104)',
-                    'rgb(82, 55, 138)',
-                ],
-                borderWidth: 1,
-            },
-        ],
+    const [generationData, setGenerationData] = useState<number[]>([0, 0, 0]);
+    const [totalGeneration, setTotalGeneration] = useState<number>(0);
+    const [selectedInterval, setSelectedInterval] = useState<string>('1'); // Default to last 1 hour
+
+    // API call to fetch combined consumption data
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await axios.get(`http://localhost:5000/api/sourcetypeconsumption?hours=${selectedInterval}`);
+                const data = response.data;
+
+                // Initialize consumption object with default values
+                const consumption = {
+                    Grid: 0,
+                    Solar: 0,
+                    Genset: 0,
+                };
+
+                // Map the fetched data to consumption values based on energy source
+                data.forEach((item: { energy_source: string; total_consumption: string }) => {
+                    if (consumption[item.energy_source] !== undefined) {
+                        consumption[item.energy_source] = parseFloat(item.total_consumption); // Convert string to number
+                    }
+                });
+
+                // Update generation data array
+                const updatedGenerationData = [
+                    consumption.Solar,
+                    consumption.Genset,
+                    consumption.Grid,
+                ];
+
+                // Calculate total generation
+                const total = updatedGenerationData.reduce((sum, value) => sum + value, 0);
+
+                setGenerationData(updatedGenerationData);
+                setTotalGeneration(total);
+            } catch (error) {
+                console.error('Error fetching generation mix data:', error);
+            }
+        };
+
+        fetchData();
+    }, [selectedInterval]); // Refetch data when selectedInterval changes
+
+    // Handle dropdown selection change
+    const handleIntervalChange = (event: SelectChangeEvent) => {
+        setSelectedInterval(event.target.value);
     };
 
-    // Calculate total generation
-    const totalGeneration = data.datasets[0].data.reduce((sum, value) => sum + value, 0);
+    // Conditionally handle the chart data
+    const chartData = totalGeneration > 0
+        ? {
+            labels: ['Solar', 'Genset', 'Grid'],
+            datasets: [
+                {
+                    label: 'Generation Mix (MW)',
+                    data: generationData,
+                    backgroundColor: [
+                        'rgba(255, 206, 86, 0.8)', // Solar (Yellow)
+                        'rgba(75, 192, 192, 0.8)', // Genset (Teal)
+                        'rgba(153, 102, 255, 0.8)', // Grid (Purple)
+                    ],
+                    borderColor: [
+                        'rgb(158, 128, 53)',
+                        'rgb(42, 104, 104)',
+                        'rgb(82, 55, 138)',
+                    ],
+                    borderWidth: 1,
+                },
+            ],
+        }
+        : {
+            labels: ['No Data'], // Placeholder for empty donut
+            datasets: [
+                {
+                    label: 'No Generation',
+                    data: [1], // Fake value for an empty chart
+                    backgroundColor: ['rgba(211, 211, 211, 0.5)'], // Light gray color for empty chart
+                    borderColor: ['rgba(169, 169, 169, 1)'],
+                    borderWidth: 1,
+                },
+            ],
+        };
 
-    // Custom plugin to display total in the center
+    // Custom plugin to display total in the center of the chart
     const centerTextPlugin = {
         id: 'centerText',
         beforeDraw: (chart: ChartJS) => {
             const { ctx, chartArea } = chart;
-            const { width, height } = chartArea;
-
-            // Restore the context state
             ctx.restore();
 
             // Set font properties
-            const fontSize = 16; // Base font size
-            const lineHeight = fontSize * 1.2; // Line height for spacing
+            const fontSize = 16;
+            const lineHeight = fontSize * 1.2;
             ctx.font = `${fontSize}px sans-serif`;
             ctx.textBaseline = 'middle';
             ctx.textAlign = 'center';
             ctx.fillStyle = '#000';
 
-            // Calculate text position
             const textX = Math.round((chartArea.left + chartArea.right) / 2);
             const textY = Math.round((chartArea.top + chartArea.bottom) / 2);
 
-            // Draw "Total" text
-            ctx.fillText('Total', textX, textY - lineHeight / 2);
+            if (totalGeneration > 0) {
+                ctx.fillText('Total', textX, textY - lineHeight / 2);
+                ctx.font = `bold ${fontSize}px sans-serif`;
+                ctx.fillText(`${totalGeneration.toFixed(2)} MW`, textX, textY + lineHeight / 2);
+            } else {
+                ctx.fillText('No Data', textX, textY);
+            }
 
-            // Draw the total value with "MW"
-            ctx.font = `bold ${fontSize}px sans-serif`; // Make the value bold
-            ctx.fillText(`${totalGeneration} MW`, textX, textY + lineHeight / 2);
-
-            // Save the context state
             ctx.save();
         },
     };
+
     return (
         <Card style={{ width: '100%', height: '500px', marginBottom: '40px' }}>
-            <CardHeader title="Generation Mix" />
-            <div style={{
-                width: '400px', height: '400px', marginTop: '10px'
-            }}>
+            <CardHeader
+                title="Generation Mix"
+                action={
+                    <FormControl size="small" variant="outlined">
+                        <Select
+                            value={selectedInterval}
+                            onChange={handleIntervalChange}
+                        >
+                            <MenuItem value="1">Last 1 Hour</MenuItem>
+                            <MenuItem value="12">Last 12 Hours</MenuItem>
+                            <MenuItem value="24">Last 24 Hours</MenuItem>
+                            <MenuItem value="48">Last 48 Hours</MenuItem>
+                        </Select>
+                    </FormControl>
+                }
+            />
+            <div style={{ width: '400px', height: '400px', marginTop: '10px' }}>
                 <Doughnut
-                    data={data}
+
+                    key={totalGeneration} // Re-render the chart when totalGeneration changes
+                    data={chartData}
                     plugins={[centerTextPlugin]}
                     options={{
                         responsive: true,
@@ -92,6 +165,4 @@ const GenerationMixChart: React.FC = () => {
     );
 };
 
-
-
-export default GenerationMixChart;;
+export default GenerationMixChart;

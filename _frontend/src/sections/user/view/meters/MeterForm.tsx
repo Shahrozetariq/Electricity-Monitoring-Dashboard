@@ -10,11 +10,11 @@ import {
     MenuItem,
     InputLabel,
     FormControl,
-    SelectChangeEvent
+    SelectChangeEvent,
 } from "@mui/material";
 
 import { Meter } from "./meter";
-import { getEnergySources, getCompanies, getBlocks } from "./MetersApi";
+import { getEnergySources, getCompanies, getBlocks, getMeterTypes } from "./MetersApi";
 
 interface Props {
     open: boolean;
@@ -26,15 +26,16 @@ interface Props {
 const MeterForm: React.FC<Props> = ({ open, onClose, onSubmit, meter }) => {
     const [formData, setFormData] = useState<Meter>({
         meter_name: "",
-        meter_type: "",
+        meter_type: 0,
         energy_source_id: 0,
         company_id: 0,
         block_id: 0,
     });
 
-    const [energySources, setEnergySources] = useState<{ energy_source_id: number; energy_source_name: string; }[]>([]);
-    const [companies, setCompanies] = useState<{ company_id: number; company_name: string; }[]>([]);
-    const [blocks, setBlocks] = useState<{ block_id: number; block_name: string; }[]>([]);
+    const [energySources, setEnergySources] = useState<{ energy_source_id: number; energy_source_name: string }[]>([]);
+    const [companies, setCompanies] = useState<{ company_id: number; company_name: string }[]>([]);
+    const [blocks, setBlocks] = useState<{ block_id: number; block_name: string }[]>([]);
+    const [meterTypes, setMeterTypes] = useState<{ type_id: number; type: string }[]>([]);
 
     useEffect(() => {
         if (meter) {
@@ -42,7 +43,7 @@ const MeterForm: React.FC<Props> = ({ open, onClose, onSubmit, meter }) => {
         } else {
             setFormData({
                 meter_name: "",
-                meter_type: "",
+                meter_type: 0,
                 energy_source_id: 0,
                 company_id: 0,
                 block_id: 0,
@@ -55,6 +56,7 @@ const MeterForm: React.FC<Props> = ({ open, onClose, onSubmit, meter }) => {
             setEnergySources(await getEnergySources());
             setCompanies(await getCompanies());
             setBlocks(await getBlocks());
+            setMeterTypes(await getMeterTypes()); // Fetch meter types from the API
         }
         fetchLookups();
     }, []);
@@ -78,7 +80,18 @@ const MeterForm: React.FC<Props> = ({ open, onClose, onSubmit, meter }) => {
             <DialogTitle>{meter ? "Edit Meter" : "Add Meter"}</DialogTitle>
             <DialogContent>
                 <TextField label="Meter Name" name="meter_name" fullWidth margin="normal" value={formData.meter_name} onChange={handleChange} />
-                <TextField label="Type" name="meter_type" fullWidth margin="normal" value={formData.meter_type} onChange={handleChange} />
+
+                {/* Meter Type Dropdown */}
+                <FormControl fullWidth margin="normal">
+                    <InputLabel>Meter Type</InputLabel>
+                    <Select name="meter_type" value={formData.meter_type} onChange={handleChange}>
+                        {meterTypes.map((type) => (
+                            <MenuItem key={type.type_id} value={type.type_id}>
+                                {type.type}
+                            </MenuItem>
+                        ))}
+                    </Select>
+                </FormControl>
 
                 {/* Energy Source Dropdown */}
                 <FormControl fullWidth margin="normal">
@@ -115,7 +128,6 @@ const MeterForm: React.FC<Props> = ({ open, onClose, onSubmit, meter }) => {
                         ))}
                     </Select>
                 </FormControl>
-
             </DialogContent>
             <DialogActions>
                 <Button onClick={onClose}>Cancel</Button>

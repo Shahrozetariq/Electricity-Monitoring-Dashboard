@@ -1,22 +1,74 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Bar } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
-import { Card, CardHeader } from '@mui/material';
+import { Card, CardHeader, MenuItem, Select, SelectChangeEvent, FormControl } from '@mui/material';
+import axios from 'axios'; // For making the API call
+
 // Register Chart.js components
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 const GenerationTypeChart: React.FC = () => {
-    // Dummy data
-    const data = {
-        labels: ['Solar', 'Gen Sets', 'Power Grid'], // Generation types
+    const [generationData, setGenerationData] = useState<number[]>([0, 0, 0]);
+    const [totalGeneration, setTotalGeneration] = useState<number>(0);
+    const [selectedInterval, setSelectedInterval] = useState<string>('1'); // Default to last 1 hour
+
+    // API call to fetch real generation type consumption
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await axios.get(`http://localhost:5000/api/sourcetypeconsumption?hours=${selectedInterval}`);
+                const data = response.data;
+
+                // Initialize consumption object with default values
+                const consumption = {
+                    Grid: 0,
+                    Solar: 0,
+                    Genset: 0,
+                };
+
+                // Map the fetched data to consumption values based on energy source
+                data.forEach((item: { energy_source: string; total_consumption: string }) => {
+                    if (consumption[item.energy_source] !== undefined) {
+                        consumption[item.energy_source] = parseFloat(item.total_consumption); // Convert string to number
+                    }
+                });
+
+                // Update generation data array
+                const updatedGenerationData = [
+                    consumption.Solar,
+                    consumption.Genset,
+                    consumption.Grid,
+                ];
+
+                // Calculate total generation
+                const total = updatedGenerationData.reduce((sum, value) => sum + value, 0);
+
+                setGenerationData(updatedGenerationData);
+                setTotalGeneration(total);
+            } catch (error) {
+                console.error('Error fetching generation mix data:', error);
+            }
+        };
+
+        fetchData();
+    }, [selectedInterval]); // Refetch data when selectedInterval changes
+
+    // Handle dropdown selection change
+    const handleIntervalChange = (event: SelectChangeEvent) => {
+        setSelectedInterval(event.target.value);
+    };
+
+    // Chart data object (dynamically updated based on API response)
+    const chartData = {
+        labels: ['Solar', 'Genset', 'Grid'], // Labels for the bars
         datasets: [
             {
-                label: "Generation Types (MW)", // Label for the dataset
-                data: [30, 20, 50], // Values for each generation type
+                label: 'Generation Types (MW)', // Dataset label
+                data: generationData, // Data fetched from the API
                 backgroundColor: [
                     'rgba(255, 206, 86, 0.8)', // Solar (Yellow)
-                    'rgba(75, 192, 192, 0.8)', // Gen Sets (Teal)
-                    'rgba(153, 102, 255, 0.8)', // Power Grid (Purple)
+                    'rgba(75, 192, 192, 0.8)', // Genset (Teal)
+                    'rgba(153, 102, 255, 0.8)', // Grid (Purple)
                 ],
                 borderColor: [
                     'rgb(158, 128, 53)',
@@ -28,14 +80,13 @@ const GenerationTypeChart: React.FC = () => {
         ],
     };
 
-    // Chart options
+    // Chart options for better visualization
     const options = {
-
         responsive: true,
-        maintainAspectRatio: false, // Disable aspect ratio to control height and width independently
+        maintainAspectRatio: false, // Allow custom width and height
         plugins: {
             legend: {
-                display: false,
+                display: false, // Disable legend (if desired)
                 position: 'bottom' as const,
             },
             tooltip: {
@@ -43,44 +94,57 @@ const GenerationTypeChart: React.FC = () => {
             },
             title: {
                 display: false,
-                text: 'Generation Mix by Type (MW)', // Chart title
+                text: 'Generation Mix by Type (MW)',
             },
         },
         scales: {
             y: {
-                beginAtZero: true, // Start the y-axis from zero
+                beginAtZero: true,
                 title: {
                     display: true,
-                    text: 'Generation : Megawatts (MW)', // Y-axis label
+                    text: 'Generation: Megawatts (MW)',
                 },
-
                 grid: {
-                    display: false, // Hide y-axis grid lines
+                    display: false,
                 },
             },
             x: {
                 title: {
                     display: false,
-                    text: 'Generation Type', // X-axis label
+                    text: 'Generation Type',
                 },
                 grid: {
-                    display: false, // Hide y-axis grid lines
+                    display: false,
                 },
-                barPercentage: 0.2, // Set bar width to 40% of the available space
-                categoryPercentage: 0.8, // Adjust spacing between categories
+                barPercentage: 0.4, // Adjust bar width
+                categoryPercentage: 0.8, // Adjust space between bars
             },
         },
     };
 
     return (
         <Card style={{ width: '100%', marginBottom: '40px' }}>
-            <CardHeader title="Generation Mix by Type" />
+            <CardHeader
+                title="Generation Mix by Type"
+                action={
+                    <FormControl size="small" variant="outlined">
+                        <Select
+                            value={selectedInterval}
+                            onChange={handleIntervalChange}
+                        >
+                            <MenuItem value="1">Last 1 Hour</MenuItem>
+                            <MenuItem value="12">Last 12 Hours</MenuItem>
+                            <MenuItem value="24">Last 24 Hours</MenuItem>
+                            <MenuItem value="48">Last 48 Hours</MenuItem>
+                        </Select>
+                    </FormControl>
+                }
+            />
             <div style={{ width: '400px', height: '450px', paddingBottom: '20px' }}>
-                <Bar data={data} options={options} />
+                <Bar data={chartData} options={options} />
             </div>
         </Card>
     );
 };
-
 
 export default GenerationTypeChart;

@@ -19,6 +19,10 @@ interface Lookup {
     energy_source_name: string;
 }
 
+interface typeLookup {
+    type_id: number;
+    type: string;
+}
 interface CompanyLookup {
     company_id: number;
     company_name: string;
@@ -31,6 +35,7 @@ interface BlockLookup {
 
 interface Props {
     meters: Meter[];
+    types: typeLookup[];
     energySources: Lookup[];
     companies: CompanyLookup[];
     blocks: BlockLookup[];
@@ -38,11 +43,13 @@ interface Props {
     onDelete: (id: number) => void;
 }
 
-const MeterTable: React.FC<Props> = ({ meters, energySources, companies, blocks, onEdit, onDelete }) => {
+const MeterTable: React.FC<Props> = ({ meters, types, energySources, companies, blocks, onEdit, onDelete }) => {
     // Helper function to find lookup name by ID
 
 
     const findEnergySourceName = (id: number) => energySources.find((e) => e.energy_source_id === id)?.energy_source_name || "-";
+    const findMeterTypeName = (id: number) => types.find((e) => e.type_id === id)?.type || "-";
+
     const findCompanyName = (id: number) => companies.find((c) => c.company_id === id)?.company_name || "-";
     const findBlockName = (id: number) => blocks.find((b) => b.block_id === id)?.block_name || "-";
 
@@ -65,7 +72,7 @@ const MeterTable: React.FC<Props> = ({ meters, energySources, companies, blocks,
                         <TableRow key={meter.meter_id}>
                             <TableCell>{meter.meter_id}</TableCell>
                             <TableCell>{meter.meter_name}</TableCell>
-                            <TableCell>{meter.meter_type}</TableCell>
+                            <TableCell>{findMeterTypeName(meter.meter_type)}</TableCell>
                             <TableCell>{findEnergySourceName(meter.energy_source_id)}</TableCell>
                             <TableCell>{findCompanyName(meter.company_id)}</TableCell>
                             <TableCell>{findBlockName(meter.block_id)}</TableCell>
