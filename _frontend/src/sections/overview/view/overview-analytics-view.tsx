@@ -1,4 +1,6 @@
 // import Grid from '@mui/material/Unstable_Grid2';
+import { useEffect, useState } from 'react';
+import axios from 'axios';
 import Typography from '@mui/material/Typography';
 import { Grid, Divider } from '@mui/material';
 
@@ -7,7 +9,7 @@ import { _tasks, _posts, _timeline } from 'src/_mock';
 import { DashboardContent } from 'src/layouts/dashboard';
 
 // import { ElectricityFlowDiagram } from './overview-power-supply';
-import Flow from './turboflow/Flow';
+// import Flow from './turboflow/Flow';
 
 import GenerationMixChart from '../analytics-generation-mix'
 import GenerationTypeChart from '../analytics-generation-type'
@@ -21,19 +23,78 @@ import { AnalyticsWidgetSummary } from '../analytics-widget-summary';
 import { AnalyticsTrafficBySite } from '../analytics-traffic-by-site';
 import { AnalyticsCurrentSubject } from '../analytics-current-subject';
 import { AnalyticsConversionRates } from '../analytics-conversion-rates';
+import EnergyFlowGraph from '../EnergyFlowGraph';
 
 
 // ----------------------------------------------------------------------
 
 export function OverviewAnalyticsView() {
+
+  const [energyData, setEnergyData] = useState([]);
+  const [chartData, setChartData] = useState({
+    categories: [],
+    series: [
+      { name: 'Utility', data: [] },
+      { name: 'HVAC', data: [] }, // Replace with real HVAC data if available
+    ],
+  });
+
+  useEffect(() => {
+    const fetchEnergyData = async () => {
+      try {
+        const response = await axios.get('http://localhost:5000/api/common_area_usage');
+        setEnergyData(response.data);
+      } catch (error) {
+        console.error('Error fetching energy data:', error);
+      }
+    };
+    axios.get('http://localhost:5000/api/company_usage')
+      .then((response) => {
+        const data = response.data;
+
+        // Sort by total_consumption and get top 5
+        const topFive = data
+          .sort((a, b) => parseFloat(b.total_consumption) - parseFloat(a.total_consumption))
+          .slice(0, 5);
+
+        const categories = topFive.map(company => company.company_name);
+        const utilityData = topFive.map(company => parseFloat(company.utility_consumption));
+        const hvacData = topFive.map(company => parseFloat(company.hvac_consumption));
+
+        setChartData({
+          categories,
+          series: [
+            { name: 'Utility', data: utilityData },
+            { name: 'HVAC', data: hvacData },
+          ],
+        });
+      })
+      .catch((error) => {
+        console.error('Error fetching company usage data:', error);
+      });
+    fetchEnergyData();
+  }, []);
+
+  const categories = energyData.map(item => item.block_name);
+  const buildingData = energyData.map(item => parseFloat(item.tenant_utility || 0));
+  const hvacData = energyData.map(item => parseFloat(item.tenant_hvac || 0));
+
+
+  const blockUtilityData = energyData.map(item => parseFloat(item.block_utility || 0));
+  const blockHvacData = energyData.map(item => parseFloat(item.block_hvac || 0));
+  const tenantUtilityData = energyData.map(item => parseFloat(item.tenant_utility || 0));
+  const tenantHvacData = energyData.map(item => parseFloat(item.tenant_hvac || 0));
+  const totalTenants = buildingData.reduce((acc, val) => acc + val, 0);
+  const totalCommonArea = hvacData.reduce((acc, val) => acc + val, 0);
+
   return (
     <DashboardContent maxWidth="xl" >
       <Typography variant="h4" sx={{ mb: { xs: 3, md: 5 } }}>
         Hi, Welcome back 👋
       </Typography>
+      <EnergyFlowGraph />
 
-
-      <Flow />
+      {/* <Flow /> */}
 
       <Divider
         sx={{
@@ -77,14 +138,13 @@ export function OverviewAnalyticsView() {
 
 
 
-        <Grid xs={12} md={6} lg={4} >
+        <Grid xs={12} md={6} lg={4}>
           <AnalyticsCurrentVisits
             title="Consumption"
             chart={{
               series: [
-                { label: 'Tenants', value: 3500 },
-                { label: 'Common Area', value: 2500 },
-
+                { label: 'Tenants', value: totalTenants },
+                { label: 'Common Area', value: totalCommonArea },
               ],
             }}
           />
@@ -93,13 +153,14 @@ export function OverviewAnalyticsView() {
         <Grid xs={12} md={8} lg={8}>
           <AnalyticsWebsiteVisits
             title="Delta Analytics"
-            subheader="(+43%) than last year"
+            subheader="(Real-time data)"
             chart={{
-              categories: ['D1', 'D2', 'D3', 'D4', 'D5', 'D6', 'D7', 'D8', 'D9', 'D10'],
+              categories, // Categories are the block names (Delta 1, Delta 2, etc.)
               series: [
-                { name: 'Building', data: [43, 33, 22, 37, 67, 68, 37, 24, 55] },
-                { name: 'HVAC', data: [51, 70, 47, 67, 40, 37, 24, 70, 24] },
-                { name: 'Combined', data: [] },
+                { name: 'Block Utility', data: blockUtilityData },
+                { name: 'Block HVAC', data: blockHvacData },
+                { name: 'Tenant Utility', data: tenantUtilityData },
+                { name: 'Tenant HVAC', data: tenantHvacData },
               ],
             }}
           />
@@ -116,13 +177,7 @@ export function OverviewAnalyticsView() {
           <AnalyticsConversionRates
             title="Top Five Companies (Current Month)"
             subheader="(+43%) than last year"
-            chart={{
-              categories: ['Company 1', 'Company 2', 'Company 3', 'Company 4', 'Company 5'],
-              series: [
-                { name: 'Building', data: [44, 55, 41, 64, 22] },
-                { name: 'HVAC', data: [53, 32, 33, 52, 13] },
-              ],
-            }}
+            chart={chartData}
           />
         </Grid>
 

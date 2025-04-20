@@ -1,0 +1,15 @@
+.graph-wrapper {
+    background: #f5f5f5;
+    border-radius: 16px;
+    box-shadow: 0px 2px 12px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+}
+
+.mui-shadow {
+    filter: drop-shadow(0px 2px 6px rgba(0, 0, 0, 0.15));
+    transition: all 0.3s ease;
+}
+
+.mui-shadow:hover {
+    filter: drop-shadow(0px 4px 12px rgba(0, 0, 0, 0.3));
+}

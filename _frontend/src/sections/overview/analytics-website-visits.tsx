@@ -26,9 +26,18 @@ type Props = CardProps & {
 export function AnalyticsWebsiteVisits({ title, subheader, chart, ...other }: Props) {
   const theme = useTheme();
 
+  // Set different colors for tenants and blocks
+
+  const tenantColorUtility = theme.palette.primary.dark;
+  const tenentColorHvac = hexAlpha(theme.palette.primary.light, 0.64);  // Green for tenants
+  const blockColorUtility = theme.palette.error.main;
+  const blockColorHvac = hexAlpha(theme.palette.error.light, 0.64);   // Orange for blocks
+
   const chartColors = chart.colors ?? [
-    theme.palette.primary.dark,
-    hexAlpha(theme.palette.primary.light, 0.64),
+    blockColorUtility,  // Block Utility
+    blockColorHvac,  // Block HVAC
+    tenantColorUtility, // Tenant Utility
+    tenentColorHvac  // Tenant HVAC
   ];
 
   const chartOptions = useChart({
@@ -50,6 +59,7 @@ export function AnalyticsWebsiteVisits({ title, subheader, chart, ...other }: Pr
     },
     ...chart.options,
   });
+
 
   return (
     <Card {...other}>

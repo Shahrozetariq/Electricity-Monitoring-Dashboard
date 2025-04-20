@@ -16,6 +16,7 @@ export const BlogPage = lazy(() => import('src/pages/blog'));
 export const UserPage = lazy(() => import('src/pages/user'));
 export const MetersPage = lazy(() => import('src/pages/MeterPage'));
 export const CompanyPage = lazy(() => import('src/pages/CompaniesPage'));
+export const CompanyConsumptionPage = lazy(() => import('src/pages/CompanyConsumptionPage'));
 export const BlocksPage = lazy(() => import('src/pages/BlocksPage'));
 export const SignInPage = lazy(() => import('src/pages/sign-in'));
 export const ProductsPage = lazy(() => import('src/pages/products'));
@@ -51,6 +52,7 @@ export function Router() {
         { path: 'user', element: <UserPage /> },
         { path: 'meters', element: <MetersPage /> },
         { path: 'companies', element: <CompanyPage /> },
+        { path: 'consumption', element: <CompanyConsumptionPage /> },
         { path: 'block', element: <BlocksPage /> },
         { path: 'products', element: <ProductsPage /> },
         { path: 'blog', element: <BlogPage /> },

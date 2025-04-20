@@ -11,6 +11,10 @@ const energySourceRoutes = require('./routes/energy_sources');
 const sourceTypeConsumptionRoutes = require("./routes/sourceTypeConsumption");
 const deltaConsumption = require("./routes/deltaConsumption");
 const metertypeRoutes = require('./routes/metertypeRoutes');
+const commonAreaUsageRoutes = require('./routes/commonAreaUsage');
+// company consumption
+const companyUsageRoutes = require('./routes/companyUsageRoutes');
+
 
 
 const app = express();
@@ -28,6 +32,10 @@ app.use('/api/energy_sources', energySourceRoutes);
 app.use("/api/sourcetypeconsumption", sourceTypeConsumptionRoutes);
 app.use("/api/delta_consumption", deltaConsumption);
 app.use('/api/metertype', metertypeRoutes);
+//api for common area usage
+app.use('/api/common_area_usage', commonAreaUsageRoutes);
+
+app.use('/api/company_usage', companyUsageRoutes);
 
 
 const PORT = process.env.PORT || 5000;
