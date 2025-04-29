@@ -1,7 +1,7 @@
 import axios from "axios";
 import { Block } from "./block";
 
-const API_URL = "http://103.164.9.126/api";
+const API_URL = "http://localhost:5000/api";
 
 // Get all blocks
 export const getBlocks = async (): Promise<Block[]> => {

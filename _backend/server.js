@@ -1,6 +1,9 @@
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
+const { Server } = require('socket.io');
+const http = require('http');
+
 require('dotenv').config();
 
 const meterRoutes = require('./routes/meters');
@@ -14,6 +17,8 @@ const metertypeRoutes = require('./routes/metertypeRoutes');
 const commonAreaUsageRoutes = require('./routes/commonAreaUsage');
 // company consumption
 const companyUsageRoutes = require('./routes/companyUsageRoutes');
+//Service to get MDI of blocks
+const blockService = require('./services/blockService');
 
 
 
@@ -36,6 +41,41 @@ app.use('/api/metertype', metertypeRoutes);
 app.use('/api/common_area_usage', commonAreaUsageRoutes);
 
 app.use('/api/company_usage', companyUsageRoutes);
+
+const server = http.createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: '*', // Allow all origins for testing
+    methods: ['GET', 'POST']
+  }
+});
+//websocket for block demand
+io.on('connection', (socket) => {
+  console.log('Client connected:', socket.id);
+
+  let intervalHandle = null;
+
+  socket.on('request_block_data', async ({ start, end, interval, refreshRate }) => {
+    if (intervalHandle) clearInterval(intervalHandle);
+
+    const sendData = async () => {
+      try {
+        const data = await blockService.getBlockDemandByRange(start, end, interval);
+        socket.emit('block_data', data);
+      } catch (err) {
+        socket.emit('error', err.message);
+      }
+    };
+
+    await sendData(); // initial send
+    intervalHandle = setInterval(sendData, refreshRate || 5 * 60 * 1000); // default: 5min
+  });
+
+  socket.on('disconnect', () => {
+    if (intervalHandle) clearInterval(intervalHandle);
+    console.log('Client disconnected:', socket.id);
+  });
+});
 
 
 const PORT = process.env.PORT || 5000;
