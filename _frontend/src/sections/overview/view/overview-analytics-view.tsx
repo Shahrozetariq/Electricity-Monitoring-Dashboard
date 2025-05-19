@@ -92,7 +92,7 @@ export function OverviewAnalyticsView() {
       <Typography variant="h4" sx={{ mb: { xs: 3, md: 5 } }}>
         Hi, Welcome back 👋
       </Typography>
-      <EnergyFlowGraph />
+      {/* <EnergyFlowGraph /> */}
 
       {/* <Flow /> */}
 

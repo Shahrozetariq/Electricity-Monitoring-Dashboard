@@ -17,12 +17,12 @@ const getBlockDemandByRange = async (start, end, interval) => {
     }
 
     const [rows] = await db.query(`
-    SELECT block_id, block_name, ${groupByClause} AS time_group, MAX(max_demand) AS max_demand
-    FROM block_5min_max_demand
-    WHERE time_slot BETWEEN ? AND ?
-    GROUP BY block_id, time_group
-    ORDER BY block_id, time_group
-  `, [start, end]);
+        SELECT block_id, block_name, ${groupByClause} AS time_group, MAX(max_demand) AS max_demand
+        FROM block_5min_max_demand
+        WHERE time_slot BETWEEN ? AND ?
+        GROUP BY block_id, block_name, time_group
+        ORDER BY block_id, time_group
+    `, [start, end]);
 
     return rows;
 };

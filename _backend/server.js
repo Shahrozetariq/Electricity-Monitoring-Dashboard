@@ -27,7 +27,6 @@ app.use(cors());
 app.use(bodyParser.json());
 
 
-app.use("/api/sourcetypeconsumption", sourceTypeConsumptionRoutes);
 
 
 app.use('/api/meters', meterRoutes);
@@ -42,14 +41,42 @@ app.use('/api/common_area_usage', commonAreaUsageRoutes);
 
 app.use('/api/company_usage', companyUsageRoutes);
 
+
+app.get('/api/block-demand', async (req, res) => {
+  try {
+    const { start, end, interval } = req.query;
+
+    // Validate required parameters
+    if (!start || !end || !interval) {
+      return res.status(400).json({
+        error: 'Missing required parameters: start, end, interval'
+      });
+    }
+
+    const data = await blockService.getBlockDemandByRange(start, end, interval);
+    res.json(data);
+
+  } catch (err) {
+    console.error('Error fetching block demand:', err);
+    res.status(500).json({
+      error: 'Failed to fetch block demand',
+      details: err.message
+    });
+  }
+});
+
 const server = http.createServer(app);
+// Initialize Socket.IO
 const io = new Server(server, {
   cors: {
-    origin: '*', // Allow all origins for testing
+    origin: process.env.CLIENT_URL || 'http://localhost:3000', // Specific origin instead of *
     methods: ['GET', 'POST']
   }
 });
-//websocket for block demand
+
+
+
+// WebSocket for block demand
 io.on('connection', (socket) => {
   console.log('Client connected:', socket.id);
 
@@ -63,6 +90,7 @@ io.on('connection', (socket) => {
         const data = await blockService.getBlockDemandByRange(start, end, interval);
         socket.emit('block_data', data);
       } catch (err) {
+        console.error('Error fetching block data:', err);
         socket.emit('error', err.message);
       }
     };
@@ -77,9 +105,10 @@ io.on('connection', (socket) => {
   });
 });
 
-
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
+// Use server.listen instead of app.listen
+server.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
+  console.log(`Socket.IO available at ws://localhost:${PORT}`);
 });
 
