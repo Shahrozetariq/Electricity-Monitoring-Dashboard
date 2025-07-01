@@ -69,7 +69,7 @@ const server = http.createServer(app);
 // Initialize Socket.IO
 const io = new Server(server, {
   cors: {
-    origin: process.env.CLIENT_URL || 'http://localhost:3000', // Specific origin instead of *
+    origin: process.env.CLIENT_URL || 'http://182.180.69.71:3000', // Specific origin instead of *
     methods: ['GET', 'POST']
   }
 });
