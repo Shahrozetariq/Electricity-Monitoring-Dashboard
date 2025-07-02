@@ -28,7 +28,7 @@ const CompanyConsumptionPage: React.FC = () => {
 
     const fetchCompanyUsage = async () => {
         try {
-            const response = await axios.get<CompanyUsage[]>('http://localhost:5000/api/company_usage');
+            const response = await axios.get<CompanyUsage[]>('http://182.180.69.171/bck//api/company_usage');
             setUsageData(response.data);
         } catch (error) {
             console.error('Error fetching company usage data:', error);

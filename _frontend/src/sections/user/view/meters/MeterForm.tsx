@@ -21,6 +21,8 @@ interface Props {
     onClose: () => void;
     onSubmit: (meter: Meter) => void;
     meter?: Meter | null;
+    types: { type_id: number; type: string }[];
+
 }
 
 const MeterForm: React.FC<Props> = ({ open, onClose, onSubmit, meter }) => {

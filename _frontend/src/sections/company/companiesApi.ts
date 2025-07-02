@@ -1,7 +1,7 @@
 import axios from "axios";
 import { Company } from "./company";
 
-const API_URL = "http://localhost:5000/api";
+const API_URL = "http://182.180.69.171/bck//api";
 
 // Get all companies
 export const getCompanies = async (): Promise<Company[]> => {

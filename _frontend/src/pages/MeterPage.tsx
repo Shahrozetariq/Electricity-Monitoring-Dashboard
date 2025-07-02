@@ -16,7 +16,22 @@ import {
     updateMetersFromReadings,
 } from "../sections/user/view/meters/MetersApi";
 
+type MeterType = {
+    type_id: number;
+    type: string;
+};
+
+interface Props {
+    open: boolean;
+    onClose: () => void;
+    onSubmit: (meter: Meter) => Promise<void>;
+    meter: Meter | null;
+    types: MeterType[]; // ✅ Add this line
+}
+
 const MetersPage: React.FC = () => {
+
+
     const [meters, setMeters] = useState<Meter[]>([]);
     const [energySources, setEnergySources] = useState<{ energy_source_id: number; energy_source_name: string }[]>([]);
     const [companies, setCompanies] = useState<{ company_id: number; company_name: string }[]>([]);

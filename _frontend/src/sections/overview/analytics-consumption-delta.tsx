@@ -19,7 +19,7 @@ const ConsumptionMixChart: React.FC = () => {
     useEffect(() => {
         const fetchBlocks = async () => {
             try {
-                const response = await axios.get('http://localhost:5000/api/blocks');
+                const response = await axios.get('http://182.180.69.171/bck//api/blocks');
                 setBlocks(response.data);
             } catch (error) {
                 console.error('Error fetching block data:', error);
@@ -34,7 +34,7 @@ const ConsumptionMixChart: React.FC = () => {
     useEffect(() => {
         const fetchDeltaConsumption = async () => {
             try {
-                const response = await axios.get(`http://localhost:5000/api/delta_consumption?hours=${selectedInterval}`);
+                const response = await axios.get(`http://182.180.69.171/bck//api/delta_consumption?hours=${selectedInterval}`);
                 const consumptionData = response.data;
 
                 if (consumptionData && consumptionData.length > 0) {
@@ -49,7 +49,7 @@ const ConsumptionMixChart: React.FC = () => {
                     setBlockLabels(labels);
 
                     // Calculate total consumption in MW
-                    const totalConsumptionKW = values.reduce((sum, value) => {
+                    const totalConsumptionKW = values.reduce((sum: number, value: number) => {
                         console.log(value, "each Value", sum); // Debug: Log each value and the current sum
                         return Number(sum) + Number(value); // Return the accumulated sum
                     }, 0); // Sum in kW

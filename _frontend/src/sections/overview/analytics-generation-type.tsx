@@ -16,20 +16,22 @@ const GenerationTypeChart: React.FC = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get(`http://localhost:5000/api/sourcetypeconsumption?hours=${selectedInterval}`);
+                const response = await axios.get(`http://182.180.69.171/bck//api/sourcetypeconsumption?hours=${selectedInterval}`);
                 const data = response.data;
 
                 // Initialize consumption object with default values
-                const consumption = {
+                type EnergySource = 'Grid' | 'Solar' | 'Genset';
+
+                const consumption: Record<EnergySource, number> = {
                     Grid: 0,
                     Solar: 0,
                     Genset: 0,
                 };
 
-                // Map the fetched data to consumption values based on energy source
                 data.forEach((item: { energy_source: string; total_consumption: string }) => {
-                    if (consumption[item.energy_source] !== undefined) {
-                        consumption[item.energy_source] = parseFloat(item.total_consumption); // Convert string to number
+                    const source = item.energy_source as EnergySource;
+                    if (source in consumption) {
+                        consumption[source] = parseFloat(item.total_consumption);
                     }
                 });
 
