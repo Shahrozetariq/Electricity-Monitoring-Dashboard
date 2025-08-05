@@ -13,6 +13,8 @@ import {
   CNavLink,
   CNavItem,
   useColorModes,
+  CRow,
+  CCol,
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
 import {
@@ -49,7 +51,9 @@ const AppHeader = () => {
           onClick={() => dispatch({ type: 'set', sidebarShow: !sidebarShow })}
           style={{ marginInlineStart: '-14px' }}
         >
-          <CIcon icon={cilMenu} size="lg" />
+          <img src="./QDPS.png" alt="Yield" style={{ width: 20, marginRight: 8 }} />
+          <CHeader>QDPS</CHeader>
+          {/* <CIcon icon={cilMenu} size="lg" /> */}
         </CHeaderToggler>
         <CHeaderNav className="d-none d-md-flex">
           <CNavItem>
@@ -64,6 +68,12 @@ const AppHeader = () => {
             <CNavLink href="#">Settings</CNavLink>
           </CNavItem>
         </CHeaderNav>
+        {/* <CHeaderNav>
+          <CHeader className="m-0 fw-semibold justify-content-center align-items-center text-cente">Quaid-e-Azam Divisional Public School Gujranwala</CHeader>
+
+        </CHeaderNav> */}
+
+
         <CHeaderNav className="ms-auto">
           <CNavItem>
             <CNavLink href="#">

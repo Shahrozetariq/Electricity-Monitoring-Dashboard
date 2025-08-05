@@ -1,6 +1,7 @@
 import React from 'react'
 import classNames from 'classnames'
 import DashboardGauge from './DashboardGauge'
+import EnergyAnalysis from './EnergyAnalysis'
 import {
   CAvatar,
   CButton,
@@ -53,8 +54,40 @@ import avatar6 from 'src/assets/images/avatars/6.jpg'
 import WidgetsBrand from '../widgets/WidgetsBrand'
 import WidgetsDropdown from '../widgets/WidgetsDropdown'
 import MainChart from './MainChart'
+import EarningsDashboard from './EarningsDashboard'
+import SiteOverviewPanel from './sites/SiteOverviewPanel'
+
+import { useState, useEffect } from 'react'
+
+
 
 const Dashboard = () => {
+
+
+
+  const [latestEnergy, setLatestEnergy] = useState({});
+
+  useEffect(() => {
+    const fetchEnergy = async () => {
+      try {
+        const response = await fetch('http://182.180.69.171:5000/latest-energy/adw300');
+        const data = await response.json();
+        const energyMap = {};
+        data.forEach((entry) => {
+          energyMap[entry.device_name] = entry.total_energy;
+        });
+        setLatestEnergy(energyMap);
+      } catch (error) {
+        console.error('Error fetching energy data:', error);
+      }
+    };
+
+    fetchEnergy(); // initial call
+    const interval = setInterval(fetchEnergy, 5000); // every 5s
+    return () => clearInterval(interval); // cleanup
+  }, []);
+
+
   const progressExample = [
     { title: 'Visits', value: '29.703 Users', percent: 40, color: 'success' },
     { title: 'Unique', value: '24.093 Users', percent: 20, color: 'info' },
@@ -179,21 +212,32 @@ const Dashboard = () => {
   return (
     <>
       <WidgetsDropdown className="mb-4" />
-
+      <CRow md="3" className="bg-light border">
+        <CCard className="mb-4 text-center">
+          <CCardHeader>Total Energy (kWh) - <span style={{ color: '#40af50', fontSize: '0.9em' }}>Last 5s</span></CCardHeader>
+          <CCardBody>
+            <div className="fw-semibold">ADW300: {latestEnergy["ADW300"] ?? 'Loading...'}</div>
+            <div className="fw-semibold">DTSD-4S: {latestEnergy["DTSD-4S"] ?? 'Loading...'}</div>
+          </CCardBody>
+        </CCard>
+      </CRow>
       <CRow >
         <CCol md="3" className="bg-light border">
           <CCard className="mb-4">
 
-            <DashboardGauge value={0} capacity={1700} />
+            <DashboardGauge value={800} capacity={1700} />
 
           </CCard>
         </CCol>
 
-        <CCol
+        <CCol md="9"
           className="bg-light border"
-          md="9"
+
         >
           <CCard className="mb-4">
+            <SiteOverviewPanel />
+          </CCard>
+          {/* <CCard className="mb-4">
             <CCardBody>
               <CRow>
                 <CCol sm={5}>
@@ -246,14 +290,15 @@ const Dashboard = () => {
                 ))}
               </CRow>
             </CCardFooter>
-          </CCard>
+          </CCard> */}
         </CCol>
 
       </CRow>
 
-
-      <WidgetsBrand className="mb-4" withCharts />
-      <CRow>
+      <EnergyAnalysis />
+      {/* <WidgetsBrand className="mb-4" withCharts /> */}
+      <EarningsDashboard className="mb-4" withCharts />
+      {/* <CRow>
         <CCol xs>
           <CCard className="mb-4">
             <CCardHeader>Traffic {' & '} Sales</CCardHeader>
@@ -398,7 +443,7 @@ const Dashboard = () => {
             </CCardBody>
           </CCard>
         </CCol>
-      </CRow>
+      </CRow> */}
     </>
   )
 }

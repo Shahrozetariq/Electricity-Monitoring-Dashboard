@@ -1,8 +1,8 @@
-@use "@coreui/coreui/scss/coreui" as * with ( 
-  $enable-deprecation-messages: false,
+@use "@coreui/coreui/scss/coreui" as * with ($enable-deprecation-messages: false,
 );
 @use "@coreui/chartjs/scss/coreui-chartjs";
 @use "vendors/simplebar";
+@import "devextreme/dist/css/dx.light.css";
 
 body {
   background-color: var(--cui-tertiary-bg);
@@ -15,7 +15,7 @@ body {
   @include transition(padding .15s);
 }
 
-.header > .container-fluid,
+.header>.container-fluid,
 .sidebar-header {
   min-height: calc(4rem + 1px); // stylelint-disable-line function-disallowed-list
 }
@@ -48,7 +48,7 @@ body {
   }
 }
 
-.header > .container-fluid + .container-fluid {
+.header>.container-fluid+.container-fluid {
   min-height: 3rem;
 }
 

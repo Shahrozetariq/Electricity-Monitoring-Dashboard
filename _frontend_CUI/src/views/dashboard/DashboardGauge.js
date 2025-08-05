@@ -18,8 +18,9 @@ function DashboardGauge({ value, capacity }) {
             fontFamily: 'sans-serif',
             textAlign: 'center'
         }}>
-            <h3 style={{ margin: 0 }}>PAF Base Lahore {capacity.toLocaleString()} kWp</h3>
-            <span style={{ color: '#888', fontSize: '0.9em' }}>Offline</span>
+            {/* <h3 style={{ margin: 0 }}>PAF Base Lahore {capacity.toLocaleString()} kWp</h3> */}
+            <span styl
+                e={{ color: '#40af50', fontSize: '0.9em' }}>Online</span>
 
             <CircularGauge
                 value={value}
