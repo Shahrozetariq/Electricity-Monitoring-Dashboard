@@ -29,7 +29,30 @@ const _nav = [
   },
   {
     component: CNavTitle,
-    name: 'Theme',
+    name: 'Data',
+  },
+  {
+    component: CNavItem,
+    name: 'EnergyDataPage',
+    to: '/meters/EnergyDataPage',
+    icon: <CIcon icon={cilDrop} customClassName="nav-icon" />,
+  },
+  {
+    component: CNavItem,
+    name: 'Electricity Billing',
+    to: '/billing/ElectricityBillPage',
+    icon: <CIcon icon={cilPencil} customClassName="nav-icon" />,
+  },{
+    component: CNavItem,
+    name: 'Power State',
+    to: '/power/EnergyMonitoringDashboard',
+    icon: <CIcon icon={cilSpeedometer} customClassName="nav-icon" />,
+  },
+  {
+    component: CNavItem,
+    name: 'Electricity Billing (Demo)',
+    to: '/billing/ElectricityBillPageDemo',
+    icon: <CIcon icon={cilPencil} customClassName="nav-icon" />,
   },
   {
     component: CNavItem,
